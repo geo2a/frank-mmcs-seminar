@@ -1,0 +1,12 @@
+X >> Y [] Y
+x >> y = y
+
+X >>= {X -> [] Y} [] Y
+x >>= f = f x
+
+if Bool then {[] X} else {[] X} [] X
+if tt then t else e = t!
+if ff then t else e = e!
+
+collapseUnit (List ()) [] ()
+collapseUnit xs = ()

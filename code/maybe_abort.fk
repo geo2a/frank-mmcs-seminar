@@ -1,0 +1,67 @@
+sig Abort
+  = aborting [] {}
+
+data Maybe X
+  = just X
+  | nothing
+
+catch [Ex ? X] [] Maybe X
+catch [x]             = just x
+catch [aborting ? k]  = nothing
+
+ex1 [Abort] Char
+ex1 = 'a' >> aborting! {}
+
+note ||| main for ex1
+  main [] Maybe Char
+  main = catch ? (ex1!)
+
+ex2 Nat [Abort] Nat
+ex2 n = if (n == zero) then {aborting! {}} else {suc n}
+
+note ||| main for ex2
+  main [] Maybe Nat
+  main = catch ? (ex2 (suc zero))
+
+Nat   - Nat   [Abort] Nat
+x     - zero  = x
+zero  - y     = aborting! {}
+suc x - suc y = x - y
+
+note
+  main [] Maybe Nat
+  main = catch ?
+    (suc zero) - zero
+
+lalala [] List {[] Nat}
+lalala = {suc zero} :: nil
+
+execList (List {[] X}) [] List X
+execList nil = nil
+execList (action :: rest) = action! :: (execList rest)
+
+execAbortList (List {[Abort] X}) [] List (Maybe X)
+execAbortList nil = nil
+execAbortList (action :: rest) = (catch ? action!) :: (execAbortList rest)
+
+map {S -> []T} (List S) [] List T
+map f nil       = nil
+map f (x :: xs) = f x :: map f xs
+
+note
+safe_minus_examples [] List {[Abort] Nat}
+safe_minus_examples = {(suc zero)       - (suc zero)} ::
+                     ({(zero)           - (suc zero)} ::
+                     ({(suc (suc zero)) - (suc zero)} :: nil))
+
+note
+  main [] List (Maybe Nat)
+  main = map {act -> catch ? act} (safe_minus_examples!)
+
+note
+main [] List (Maybe Nat)
+main = execAbortList (safe_minus_examples!)
+
+note
+  main [] List Nat
+  main = execList (lalala!)

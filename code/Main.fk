@@ -1,0 +1,28 @@
+range_1_n Nat [State (List Nat)] (List Nat)
+range_1_n zero = get!
+range_1_n (suc n) = get! >>= {
+    xs -> put (suc n :: xs) >>
+          range_1_n n
+  }
+
+printList (List Char) [Console] List ()
+printList xs = map ouch xs
+
+rangePrinter [Console, State (List Nat)] List ()
+rangePrinter = (map ouch (concat (map natToString (range_1_n (suc (suc (suc zero)))))))
+
+rangePrinter [Console, State (List Nat)] List ()
+rangePrinter = (map ouch (concat (map natToString (range_1_n 3)))))
+
+note
+  main [Console] List ()
+  main = state nil ?
+    map ouch
+    (concat (map natToString (range_1_n (suc (suc (suc zero))))))
+
+note
+  main [Console] ()
+  main = collapseUnit (state nil ? test!)
+
+main [Console] ()
+main = collapseUnit (map ouch ('h' :: ('e' :: ('l' :: ('l' :: ('o' :: nil))))))
